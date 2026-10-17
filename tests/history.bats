@@ -346,6 +346,18 @@ assert data["deletions"][0]["path"] == "/tmp/unicode-\u96ea-quote\"slash\\tab\tb
     [[ "$output" == *"No deletion audit entries yet"* ]]
 }
 
+@test "mo history labels a session without an end marker instead of printing ended not ended" {
+    cat > "$HOME/Library/Logs/mole/operations.log" <<'EOF'
+# ========== uninstall session started at 2026-05-24 10:00:00 ==========
+[2026-05-24 10:00:01] [uninstall] TRASHED /tmp/Old App.app (4KB)
+EOF
+
+    run env HOME="$HOME" "$PROJECT_ROOT/mole" history
+    [ "$status" -eq 0 ]
+    [[ "$output" == *"trashed 1, no end recorded"* ]] || return 1
+    [[ "$output" != *"ended not ended"* ]]
+}
+
 @test "mo history tolerates malformed session summaries" {
     cat > "$HOME/Library/Logs/mole/operations.log" <<'EOF'
 # ========== clean session started at 2026-05-24 10:00:00 ==========
