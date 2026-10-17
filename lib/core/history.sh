@@ -693,9 +693,11 @@ history_render_text() {
             if [[ "${HISTORY_SESSION_AMBIGUOUS[$idx]}" == 1 ]]; then
                 count_text+=", legacy run attribution uncertain"
             fi
-            [[ -z "$ended" ]] && ended="not ended"
+            local ended_text="ended $ended"
+            # A session without an end marker was interrupted or is still running.
+            [[ -z "$ended" ]] && ended_text="no end recorded"
             printf '  %-10s %s, %s items, %s\n' "$command" "$started" "$items" "$size"
-            printf '             %s, ended %s\n' "$count_text" "$ended"
+            printf '             %s, %s\n' "$count_text" "$ended_text"
             idx=$((idx - 1))
         done
     fi
